@@ -7,8 +7,8 @@ parser = argparse.ArgumentParser()
 
 load_dotenv()
 
-api_key = os.environ("API_KEY")
-endpoint = os.environ("ENDPOINT")
+api_key = os.getenv("API_KEY")
+endpoint = os.getenv("ENDPOINT")
 
 def parse_args():
     parser.add_argument(

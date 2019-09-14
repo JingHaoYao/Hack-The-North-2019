@@ -7,7 +7,7 @@ class SQliteDB:
         #
         # Path to sqlite database under home directory
         #
-        self.sqlite_path = os.getenv("HOME") + "/sqlite.db"
+        self.sqlite_path = "sqlite.db"
 
         #
         # Table creation SQL command
@@ -30,14 +30,14 @@ class SQliteDB:
         )
 
         self.create_view_command = (
-            "CREATE VIEW RESULTS AS SELECT KEYWORD, "
+            "CREATE VIEW IF NOT EXISTS RESULTS AS SELECT KEYWORD, "
             "GAME_NAME, COUNT(*) AS KEYWORD_OCCURENCES, "
             "AVG(SENTIMENT) AS AVG_SENTIMENT "
             "FROM TEXT_ANALYTICS_RESULTS GROUP BY KEYWORD, GAME_NAME"
         )
 
         self.create_view_command_2 = (
-            "CREATE VIEW FILTERED_GAME_SET AS SELECT MAX(GAME_NAME), MAX(GENRE), MAX(RATING) "
+            "CREATE VIEW IF NOT EXISTS FILTERED_GAME_SET AS SELECT MAX(GAME_NAME), MAX(GENRE), MAX(RATING) "
             "FROM GAME_DATA_SET GROUP BY REVIEWER_ID"
         )
 
