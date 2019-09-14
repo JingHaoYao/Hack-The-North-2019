@@ -13,9 +13,17 @@ class SQliteDB:
         #
         self.create_table = (
             "CREATE TABLE IF NOT EXISTS TEXT_ANALYTICS_RESULTS ("
-            #
-            # TODO: Figure table schema for storing filtered entries
-            #
+            "GAME_NAME TEXT NOT NULL, "
+            "SENTIMENT INT NOT NULL, "
+            "KEYWORD TEXT NOT NULL"
+            ")"
+        )
+
+        self.create_table_2 = (
+            "CREATE TABLE IF NOT EXISTS GAME_DATA_SET ("
+            "GAME_NAME TEXT NOT NULL, "
+            "GENRE TEXT NOT NULL, "
+            "RATING INT NOT NULL"
             ")"
         )
 
@@ -41,26 +49,49 @@ class SQliteDB:
         self.cursor.execute(delete_entries)
         self.conn.commit()
 
-    def insert_into_db(self, *args):
+    def insert_into_db(self, game_name, sentiment, keyword):
         #
         # Insert SQL command
         #
         insert_entries = (
             "INSERT INTO TEXT_ANALYTICS_RESULTS ("
-            #
-            # TODO: Figure table schema for storing filtered entries
-            #
+            "GAME_NAME, "
+            "SENTIMENT, "
+            "KEYWORD"
             ") "
-            "values ()"
+            "values (?, ?, ?)"
         )
 
         params = (
-            #
-            # TODO: table schema
-            #
+            game_name,
+            sentiment,
+            keyword
         )
 
         self.cursor.execute(insert_entries, params)
+        self.conn.commit()
+
+    def insert_into_db_2(self, game_name, genre, rating):
+        #
+        # Insert SQL command
+        #
+        insert_entries = (
+            "INSERT INTO TEXT_ANALYTICS_RESULTS ("
+            "GAME_NAME, "
+            "GENRE, "
+            "RATING"
+            ") "
+            "values (?, ?, ?)"
+        )
+
+        params = (
+            game_name,
+            genre,
+            rating
+        )
+
+        self.cursor.execute(insert_entries, params)
+        self.conn.commit()
 
     def select_from_db(self, *args):
         select_command = (
