@@ -7,7 +7,7 @@ class SQliteDB:
         #
         # Path to sqlite database under home directory
         #
-        self.sqlite_path = os.getenv("HOME") + "/sqlite.db"
+        self.sqlite_path = "sqlite.db"
 
         #
         # Table creation SQL command
@@ -30,15 +30,15 @@ class SQliteDB:
         )
 
         self.create_view_command = (
-            "CREATE VIEW RESULTS AS SELECT KEYWORD, "
+            "CREATE VIEW IF NOT EXISTS RESULTS AS SELECT KEYWORD, "
             "GAME_NAME, COUNT(*) AS KEYWORD_OCCURENCES, "
             "AVG(SENTIMENT) AS AVG_SENTIMENT "
             "FROM TEXT_ANALYTICS_RESULTS GROUP BY KEYWORD, GAME_NAME"
         )
 
         self.create_view_command_2 = (
-            "CREATE VIEW FILTERED_GAME_SET AS SELECT MAX(GAME_NAME), MAX(GENRE), MAX(RATING) "
-            "FROM GAME_DATA_SET GROUP BY REVIEWER_ID"
+            "CREATE VIEW IF NOT EXISTS FILTERED_GAME_SET AS SELECT GAME_NAME, MAX(GENRE), AVG(RATING) FROM (SELECT MAX(GAME_NAME), MAX(GENRE), MAX(RATING) "
+            "FROM GAME_DATA_SET GROUP BY REVIEWER_ID) GROUP BY GAME_NAME"
         )
 
         #
@@ -64,15 +64,6 @@ class SQliteDB:
         self.cursor.execute(self.create_view_command_2)
         self.conn.commit()
 
-    def delete_all_entries(self):
-        #
-        # Delete all entries from table SQL command
-        #
-        delete_entries = "DELETE FROM TEXT_ANALYTICS_RESULTS"
-
-        self.cursor.execute(delete_entries)
-        self.conn.commit()
-
     def insert_into_db(self, game_name, sentiment, keyword):
         #
         # Insert SQL command
@@ -95,13 +86,11 @@ class SQliteDB:
         self.cursor.execute(insert_entries, params)
         self.conn.commit()
 
-    def insert_into_db_2(self, game_name, genre, rating):
+    def insert_into_db_2(self, game_name, genre, reviewer, rating):
         #
         # Insert SQL command
         #
-        #
-        # TODO: fix this
-        #
+
         insert_entries = (
             "INSERT INTO GAME_DATA_SET ("
             "GAME_NAME, "
@@ -109,24 +98,17 @@ class SQliteDB:
             "REVIEWER_ID, "
             "RATING"
             ") "
-            "values (?, ?, ?)"
+            "values (?, ?, ?, ?)"
         )
 
         params = (
             game_name,
             genre,
+            reviewer,
             rating
         )
 
         self.cursor.execute(insert_entries, params)
-        self.conn.commit()
-
-    def select_from_db(self, *args):
-        select_command = (
-            "SELECT * FROM TEXT_ANALYTICS_RESULTS"
-        )
-
-        self.cursor.execute(select_command)
         self.conn.commit()
 
     def generate_suggestions(self, game_name):
