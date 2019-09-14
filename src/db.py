@@ -17,17 +17,6 @@ class SQliteDB:
             "GAME_NAME TEXT NOT NULL, "
             "SENTIMENT INT NOT NULL, "
             "KEYWORD TEXT NOT NULL"
-<<<<<<< HEAD
-=======
-            ")"
-        )
-
-        self.create_table_2 = (
-            "CREATE TABLE IF NOT EXISTS GAME_DATA_SET ("
-            "GAME_NAME TEXT NOT NULL, "
-            "GENRE TEXT NOT NULL, "
-            "RATING INT NOT NULL"
->>>>>>> 38b82efc0e1d96bdff76670ec9f6e2696274e2cc
             ")"
         )
 
