@@ -24,13 +24,8 @@ class TextAnalytics:
         self.client = TextAnalyticsClient(endpoint=self.endpoint)
 
     def parse_csv(self):
-        rows = []
-        with open(self.csv_path) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            for row in csv_reader:
-                rows.append(row)
-
-        return rows
+        dataframe = pd.read_csv(csv_file)
+        return dataframe
 
     def send_to_text_analytics(self, data_frame):
         for index, row in data_frame.iterrows():
