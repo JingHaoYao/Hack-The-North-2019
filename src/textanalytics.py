@@ -3,13 +3,14 @@ import requests
 from pprint import pprint
 from db import SQliteDB
 from pandas import DataFrame
+import pandas as pd
 from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
 from msrest.authentication import CognitiveServicesCredentials
 import csv
 import json
 
 class TextAnalytics:
-    def init(self, _csv, _api_key, _endpoint):
+    def __init__(self, _csv, _api_key, _endpoint):
         self.csv_path = _csv
         self.api_key = _api_key
         self.endpoint = _endpoint
@@ -21,10 +22,10 @@ class TextAnalytics:
         self.sentiment_endpoint = self.endpoint + "text/analytics/v2.1/sentiment"
         self.keyphrase_endpoint = self.endpoint + "text/analytics/v2.1/keyPhrases"
 
-        self.client = TextAnalyticsClient(endpoint=self.endpoint)
+        self.client = TextAnalyticsClient(endpoint=self.endpoint, credentials=self.api_key)
 
     def parse_csv(self):
-        dataframe = pd.read_csv(csv_file)
+        dataframe = pd.read_csv(self.csv_path)
         return dataframe
 
     def send_to_text_analytics(self, data_frame):
