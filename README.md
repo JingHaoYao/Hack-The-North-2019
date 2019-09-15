@@ -1,4 +1,4 @@
-# Hack-The-North-2019
+# Video Game Recommender
 Hack The North Repository
 We created a video game review search tool that offers more accurate recommendations for games by utilizing Microsoft Azure Cognitive Services Text Analytics tool to gain deeper insight.
 
