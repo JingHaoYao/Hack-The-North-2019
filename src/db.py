@@ -36,7 +36,7 @@ class SQliteDB:
         )
 
         self.create_view_command = (
-            "ALTER VIEW RESULTS AS SELECT LOWER(KEYWORD) AS KEYWORD, "
+            "CREATE VIEW IF NOT EXISTS RESULTS AS SELECT LOWER(KEYWORD) AS KEYWORD, "
             "GAME_NAME, COUNT(*) AS KEYWORD_OCCURENCES, "
             "AVG(SENTIMENT) AS AVG_SENTIMENT "
             "FROM TEXT_ANALYTICS_RESULTS GROUP BY KEYWORD, GAME_NAME"
@@ -117,7 +117,7 @@ class SQliteDB:
         self.cursor.execute(insert_entries, params)
         self.conn.commit()
 
-    def generate_suggestions_features(self, key_phrases)
+    def generate_suggestions_features(self, key_phrases):
         #
         # Get all game names
         #

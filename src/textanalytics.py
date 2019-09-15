@@ -31,7 +31,6 @@ class TextAnalytics:
 
     def send_to_text_analytics(self, data_frame):
         for index, row in data_frame.iterrows():
-            print(row["game"], row["genre"], row["reviewer_id"], row["overall_score"])
             self.db.insert_into_db_2(row["game"], row["genre"], row["reviewer_id"], row["overall_score"])
 
             documents = [
@@ -55,7 +54,6 @@ class TextAnalytics:
 
             for document in response_key_phrases.documents:
                 for phrase in document.key_phrases:
-                    print(document.id, extracted_sentiment, phrase)
                     self.db.insert_into_db(document.id, extracted_sentiment, phrase)
 
     def print_suggestion(self, key_phrases):
