@@ -20,7 +20,7 @@ class SQliteDB:
         #
         self.create_table = (
             "CREATE TABLE IF NOT EXISTS TEXT_ANALYTICS_RESULTS ("
-            "GAME_NAME TEXT, "
+            "GAME_NAME TEXT NOT NULL, "
             "SENTIMENT INT, "
             "KEYWORD TEXT"
             ")"
@@ -28,7 +28,7 @@ class SQliteDB:
 
         self.create_table_2 = (
             "CREATE TABLE IF NOT EXISTS GAME_DATA_SET ("
-            "GAME_NAME TEXT, "
+            "GAME_NAME TEXT NOT NULL, "
             "GENRE TEXT, "
             "REVIEWER_ID, "
             "RATING INT"
@@ -44,7 +44,8 @@ class SQliteDB:
 
         self.create_view_command_2 = (
             "CREATE VIEW IF NOT EXISTS FILTERED_GAME_SET AS SELECT GAME_NAME, "
-            "MAX(GENRE), AVG(RATING) FROM (SELECT MAX(GAME_NAME) AS GAME_NAME, MAX(GENRE) AS GENRE, MAX(RATING) AS RATING "
+            "MAX(GENRE) AS GENRE, AVG(RATING) AS AVG_RATING FROM "
+            "(SELECT MAX(GAME_NAME) AS GAME_NAME, MAX(GENRE) AS GENRE, MAX(RATING) AS RATING "
             "FROM GAME_DATA_SET GROUP BY REVIEWER_ID) GROUP BY GAME_NAME"
         )
 
@@ -135,8 +136,8 @@ class SQliteDB:
         # The score of the maximum scoring suggestion
         #
         max_suggestion_score = 0
-        
-        # 
+
+        #
         # The maximum scoring suggestion
         #
         max_suggestion = None
@@ -144,7 +145,7 @@ class SQliteDB:
         select_game = (
             "SELECT * FROM RESULTS WHERE AVG_SENTIMENT > 5"
         )
-        
+
         selected_data_frame = pd.read_sql_query(select_game, self.conn)
 
         print(selected_data_frame)
@@ -202,4 +203,3 @@ class SQliteDB:
                 standarized_list.append(standarized_keywords)
         w2v_model = Word2Vec(standarized_list, min_count=1)
         return w2v_model
-
