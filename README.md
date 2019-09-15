@@ -18,6 +18,6 @@ Example: in directory - $python src/run_app.py -c [csv_file_path] -a [api-key] -
 <br>
 -a api-key for microsoft azure cognitive services
 <br>
--e endpoint for microsoft azure cognitive sercices
+-e endpoint for microsoft azure cognitive services
 <br>
 -k search terms, seperated by commans without spaces, to find games according to search phrases. Currently only supports 1 word phrases (optional)
