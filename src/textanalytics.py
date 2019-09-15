@@ -57,4 +57,7 @@ class TextAnalytics:
                     self.db.insert_into_db(document.id, extracted_sentiment, phrase)
 
     def print_suggestion(self, key_phrases):
-        print(self.db.generate_suggestions_features(key_phrases).return_game_name())
+        try:
+            print(self.db.generate_suggestions_features(key_phrases).return_game_name())
+        except:
+            print("Didn't find what you were looking for, but you could probably do what you want in Minecraft.")

@@ -20,18 +20,18 @@ class SQliteDB:
         #
         self.create_table = (
             "CREATE TABLE IF NOT EXISTS TEXT_ANALYTICS_RESULTS ("
-            "GAME_NAME TEXT NOT NULL, "
-            "SENTIMENT INT NOT NULL, "
-            "KEYWORD TEXT NOT NULL"
+            "GAME_NAME TEXT, "
+            "SENTIMENT INT, "
+            "KEYWORD TEXT"
             ")"
         )
 
         self.create_table_2 = (
             "CREATE TABLE IF NOT EXISTS GAME_DATA_SET ("
-            "GAME_NAME TEXT NOT NULL, "
-            "GENRE TEXT NOT NULL, "
+            "GAME_NAME TEXT, "
+            "GENRE TEXT, "
             "REVIEWER_ID, "
-            "RATING INT NOT NULL"
+            "RATING INT"
             ")"
         )
 
@@ -43,7 +43,8 @@ class SQliteDB:
         )
 
         self.create_view_command_2 = (
-            "CREATE VIEW IF NOT EXISTS FILTERED_GAME_SET AS SELECT GAME_NAME, MAX(GENRE), AVG(RATING) FROM (SELECT MAX(GAME_NAME), MAX(GENRE), MAX(RATING) "
+            "CREATE VIEW IF NOT EXISTS FILTERED_GAME_SET AS SELECT GAME_NAME, "
+            "MAX(GENRE), AVG(RATING) FROM (SELECT MAX(GAME_NAME) AS GAME_NAME, MAX(GENRE) AS GENRE, MAX(RATING) AS RATING "
             "FROM GAME_DATA_SET GROUP BY REVIEWER_ID) GROUP BY GAME_NAME"
         )
 
@@ -140,42 +141,43 @@ class SQliteDB:
         #
         max_suggestion = None
 
-        for game_name in game_list:
-            select_game = (
-                "SELECT * FROM RESULTS WHERE GAME_NAME={} AND AVG_SENTIMENT > 50".format(game_name)
-            )
-            
-            selected_data_frame = pd.read_sql_query(select_game, self.conn)
+        select_game = (
+            "SELECT * FROM RESULTS WHERE AVG_SENTIMENT > 5"
+        )
+        
+        selected_data_frame = pd.read_sql_query(select_game, self.conn)
 
-            w2v_model = self.summarize_set(selected_data_frame)
+        print(selected_data_frame)
 
-            #
-            # Total matching score of the suggestion
-            #
-            total_score = 0
+        w2v_model = self.summarize_set(selected_data_frame)
 
-            #
-            # Iterates through the list of entries within the title
-            #
-            for index, row in selected_data_frame:
-                for key_phrase in key_phrases:
+        #
+        # Total matching score of the suggestion
+        #
+        total_score = 0
+
+        #
+        # Iterates through the list of entries within the title
+        #
+        for index, row in selected_data_frame.iterrows():
+            for key_phrase in key_phrases:
+                #
+                # Get list of tuples that are similar to key phrase and their matching score
+                #
+                matches = w2v_model.most_similar(key_phrase, topn=30)
+
+                #
+                # Check for the key_phrase itself
+                #
+                if key_phrase == row["KEYWORD"]:
+                    total_score += row["KEYWORD_OCCURENCES"] * 10 + 100
+
+                for match in matches:
                     #
-                    # Get list of tuples that are similar to key phrase and their matching score
+                    # checks if the review contains a similar word to the keyphrase
                     #
-                    matches = w2v_model.most_similar(key_phrase)
-
-                    #
-                    # Check for the key_phrase itself
-                    #
-                    if key_phrase == row["KEYWORD"]:
-                        totalscore += row["KEYWORD_OCCURENCES"] * 10 + 100
-
-                    for match in matches:
-                        #
-                        # checks if the review contains a similar word to the keyphrase
-                        #
-                        if match == row["KEYWORD"]:
-                            total_score += 70 * math.tanh((row["KEYWORD_OCCURENCES"] * 10) / 50)
+                    if match == row["KEYWORD"]:
+                        total_score += 70 * math.tanh((row["KEYWORD_OCCURENCES"] * 10) / 50)
 
             if total_score > max_suggestion_score:
                 #
@@ -183,7 +185,7 @@ class SQliteDB:
                 # and set max suggestion to the new max
                 #
                 max_suggestion_score = total_score
-                max_suggestion = Suggestion(game_name, total_score)
+                max_suggestion = Suggestion(row["GAME_NAME"], total_score)
 
         return max_suggestion
 
@@ -198,6 +200,6 @@ class SQliteDB:
                     standarized_keywords.append(word)
             for y in range(data[2]):
                 standarized_list.append(standarized_keywords)
-        w2v_model = Word2Vec(standarized_list)
+        w2v_model = Word2Vec(standarized_list, min_count=1)
         return w2v_model
 

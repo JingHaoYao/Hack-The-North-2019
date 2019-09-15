@@ -32,7 +32,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "-k"
+        "-k",
         "--keyphrases",
         help="keyphrases to search for like games"
     )
@@ -42,17 +42,16 @@ def parse_args():
 def main():
     args = parse_args()
 
+    text_analytics = TextAnalytics(args.csv, args.api_key, args.endpoint)
 
-    if(args.csv != None):
-        text_analytics = TextAnalytics(args.csv, args.api_key, args.endpoint)
-
+    if args.csv != None:
         #
         # Gathering parsed data and then sending it over to azure
         #
         data = text_analytics.parse_csv()
         text_analytics.send_to_text_analytics(data)
 
-    if(args.keyphrases != None):
+    if args.keyphrases != None:
         phrases = args.keyphrases.split(",")
         text_analytics.print_suggestion(phrases)
 
