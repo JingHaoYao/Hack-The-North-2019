@@ -11,6 +11,9 @@ Run run_app.py in terminal/command_prompt.
 
 ## Parameters
 -c .csv file used to update database
+<br>
 -a api-key for microsoft azure cognitive services
+<br>
 -e endpoint for microsoft azure cognitive sercices
+<br>
 -k search terms, seperated by commans without spaces, to find games according to search phrases. Currently only supports 1 word phrases
