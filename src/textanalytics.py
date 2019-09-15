@@ -57,3 +57,6 @@ class TextAnalytics:
                 for phrase in document.key_phrases:
                     print(document.id, extracted_sentiment, phrase)
                     self.db.insert_into_db(document.id, extracted_sentiment, phrase)
+
+    def print_suggestion(self, key_phrases):
+        print(self.db.generate_suggestions_features(key_phrases).return_game_name())

@@ -14,7 +14,6 @@ def parse_args():
     parser.add_argument(
         "-c",
         "--csv",
-        required=True,
         help="csv file with data set"
     )
 
@@ -32,17 +31,30 @@ def parse_args():
         help="endpoint for azure text analytics resource"
     )
 
+    parser.add_argument(
+        "-k"
+        "--keyphrases",
+        help="keyphrases to search for like games"
+    )
+
     return parser.parse_args()
 
 def main():
     args = parse_args()
-    text_analytics = TextAnalytics(args.csv, args.api_key, args.endpoint)
 
-    #
-    # Gathering parsed data and then sending it over to azure
-    #
-    data = text_analytics.parse_csv()
-    text_analytics.send_to_text_analytics(data)
+
+    if(args.csv != None):
+        text_analytics = TextAnalytics(args.csv, args.api_key, args.endpoint)
+
+        #
+        # Gathering parsed data and then sending it over to azure
+        #
+        data = text_analytics.parse_csv()
+        text_analytics.send_to_text_analytics(data)
+
+    if(args.keyphrases != None):
+        phrases = args.keyphrases.split(",")
+        text_analytics.print_suggestion(phrases)
 
 if __name__ == "__main__":
     main()
